@@ -129,42 +129,70 @@ const renderers = {
 function projectCard(p) {
   const shownClient = p.private ? 'Private client' : isPlaceholder(p.client) ? '' : p.client;
   const images = p.images ?? [];
+  const demos = images.filter((img) => !isPlaceholder(img.demo));
   const shot = images.length
     ? images
-        .map(
-          (img, i) =>
-            `<img src="${esc(img.src)}" alt="${esc(img.alt)}" loading="lazy" decoding="async" width="1440" height="900"${i === 0 ? ' class="is-active"' : ''}>`
-        )
+        .map((img, i) => {
+          const tag = `<img src="${esc(img.src)}" alt="${esc(img.alt)}" loading="lazy" decoding="async" width="1440" height="900"${i === 0 ? ' class="is-active"' : ''}>`;
+          if (isPlaceholder(img.demo)) return tag;
+          // the screenshot itself links to its demo for mouse and touch; keyboard and
+          // screen reader users get the same links in the list below the text instead
+          return `<a class="card__shot-link${i === 0 ? ' is-active' : ''}" href="${esc(img.demo)}" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">${tag.replace(' class="is-active"', '')}<span class="card__demo-badge mono">View live demo</span></a>`;
+        })
         .join('')
     : `<span class="card__cover" aria-hidden="true"><span class="card__cover-title">${esc(p.title)}</span></span>`;
+  const demoLinks = demos.length
+    ? `<ul class="demo-links" aria-label="Live demos">${demos
+        .map(
+          (img) =>
+            `<li><a class="demo-link mono" href="${esc(img.demo)}" target="_blank" rel="noopener" data-demo-index="${images.indexOf(img)}">${esc(img.name || img.alt)}<span class="visually-hidden"> live demo (opens in a new tab)</span></a></li>`
+        )
+        .join('')}</ul>`
+    : '';
   const showLink = p.live !== false && !isPlaceholder(p.url);
   const title = !showLink
     ? esc(p.title)
     : `<a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.title)}<span class="visually-hidden"> (opens in a new tab)</span></a>`;
 
   return `
-    <li class="panel card" data-anim="panel">
+    <li class="panel card${demos.length ? ' card--demos' : ''}" data-anim="panel">
       <div class="card__shot${images.length > 1 ? ' card__shot--cycle' : ''}${images.length ? '' : ' card__shot--cover'}">${shot}</div>
       <p class="panel__meta mono">${esc(p.type)}${shownClient && shownClient !== p.title ? ` · ${esc(shownClient)}` : ''}${p.status ? ` <span class="tag">${esc(p.status)}</span>` : ''}</p>
       <h3 class="panel__title">${title}</h3>
       <p class="panel__text">${esc(p.description)}</p>
+      ${demoLinks}
       ${p.tags?.length ? chips(p.tags) : ''}
     </li>`;
 }
 
 /* Cards with several screenshots crossfade between them. Paused when the tab
-   is hidden; with reduced motion only the first screenshot is shown. */
+   is hidden or the card is hovered or focused (so the screenshot you click is
+   the one you saw); with reduced motion only the first screenshot is shown
+   until a demo link is pointed at or focused. */
+const showShot = (set, index) =>
+  [...set.children].forEach((el, i) => el.classList.toggle('is-active', i === index));
+
 function cycleShots() {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const sets = [...document.querySelectorAll('.card__shot--cycle')];
-  if (!sets.length) return;
+
+  // pointing at or focusing a demo link shows that demo's screenshot
+  sets.forEach((set) => {
+    const show = (e) => {
+      const link = e.target.closest?.('[data-demo-index]');
+      if (link) showShot(set, Number(link.dataset.demoIndex));
+    };
+    set.closest('.card').addEventListener('pointerover', show);
+    set.closest('.card').addEventListener('focusin', show);
+  });
+
+  if (!sets.length || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   setInterval(() => {
     if (document.hidden) return;
     sets.forEach((set) => {
-      const imgs = [...set.querySelectorAll('img')];
-      const current = imgs.findIndex((img) => img.classList.contains('is-active'));
-      imgs[current].classList.remove('is-active');
-      imgs[(current + 1) % imgs.length].classList.add('is-active');
+      if (set.closest('.card').matches(':hover, :focus-within')) return;
+      const shots = [...set.children];
+      const current = shots.findIndex((el) => el.classList.contains('is-active'));
+      showShot(set, (current + 1) % shots.length);
     });
   }, 3200);
 }

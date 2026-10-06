@@ -7,7 +7,8 @@
   - Headline lines: { text, outline: true } draws the line as outlined text.
   - Placeholders in [SQUARE BRACKETS] mark details still to be filled in.
   - Project images: images: [] shows a typographic cover; one image shows it;
-    several images cycle inside the card.
+    several images cycle inside the card. Give an image `demo: 'https://...'`
+    (and a short `name`) to add a "View live demo" link for it.
 */
 
 export const content = {
@@ -82,10 +83,11 @@ export const content = {
             'Ready-made websites for hair, beauty and nail businesses, adapted from my client work into reusable starters.',
           tags: ['Hair', 'Beauty', 'Nails'],
           // more than one image = the card cycles through them
+          // demo: live demo URL for that screenshot (opens in a new tab); name labels the link
           images: [
-            { src: 'assets/projects/hair-marketplace-kit.webp', alt: 'Hair marketplace starter kit homepage' },
-            { src: 'assets/projects/hairstylist-kit.webp', alt: 'Hairstylist starter kit homepage' },
-            { src: 'assets/projects/nail-tech-kit.webp', alt: 'Nail technician starter kit homepage' },
+            { src: 'assets/projects/hair-marketplace-kit.webp', alt: 'Hair marketplace starter kit homepage', name: 'Hair marketplace', demo: 'https://esther-hair-marketplace-demo.netlify.app' },
+            { src: 'assets/projects/hairstylist-kit.webp', alt: 'Hairstylist starter kit homepage', name: 'Hairstylist', demo: 'https://esther-hairstylist-demo.netlify.app' },
+            { src: 'assets/projects/nail-tech-kit.webp', alt: 'Nail technician starter kit homepage', name: 'Nail tech', demo: 'https://esther-nail-tech-demo.netlify.app' },
           ],
           url: '',
         },
