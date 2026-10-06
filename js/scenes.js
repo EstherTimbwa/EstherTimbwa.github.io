@@ -4,8 +4,9 @@
   is measured in scenes: time 0 = scene 1 fully shown, time 1 = scene 2, ...
   Each handoff overlaps the outgoing and incoming scene, so nothing cuts.
 
-  On smaller screens or with reduced motion, gsap.matchMedia reverts all of
-  this and the page falls back to normal stacked sections.
+  On smaller screens (phones, tablets, narrow windows) gsap.matchMedia swaps
+  this for normal stacked sections with simple fade-up reveals. With reduced
+  motion neither runs and the page is plain and static.
 */
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -16,6 +17,8 @@ gsap.registerPlugin(ScrollTrigger);
 gsap.config({ nullTargetWarn: false });
 
 const STAGED_QUERY = '(min-width: 901px) and (pointer: fine) and (prefers-reduced-motion: no-preference)';
+const STACKED_QUERY =
+  '(prefers-reduced-motion: no-preference) and (max-width: 900px), (prefers-reduced-motion: no-preference) and (pointer: coarse)';
 const SCROLL_PER_SCENE = 1.5; // viewport heights of scrolling per handoff
 const SCRUB = 0.8; // seconds of smoothing between scroll and timeline
 
@@ -197,6 +200,29 @@ export function initScenes({ onProgress, onActive }) {
       scenes.forEach((s) => { s.inert = false; });
       root.classList.remove('is-staged');
     };
+  });
+
+  /* phones / tablets / narrow windows: stacked sections, elements fade up once
+     as they scroll into view */
+  mm.add(STACKED_QUERY, () => {
+    const intro = scenes[0];
+    revealIntro(intro);
+
+    const items = scenes
+      .slice(1)
+      .flatMap((scene) => [...scene.querySelectorAll('.label, .line, .bigword, [data-anim="panel"]')]);
+    gsap.set(items, { y: 28, opacity: 0 });
+
+    ScrollTrigger.batch(items, {
+      start: 'top bottom', // as soon as it enters, so the last items on the page still reveal
+      once: true,
+      onEnter: (batch) =>
+        gsap.to(batch, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', stagger: 0.08, overwrite: true }),
+    });
+
+    // anything already on screen at load (e.g. opened at #contact) shows straight away
+    ScrollTrigger.refresh();
+    document.fonts?.ready.then(() => ScrollTrigger.refresh());
   });
 
   return mm;

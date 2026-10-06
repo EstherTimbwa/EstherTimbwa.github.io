@@ -187,12 +187,49 @@ function contactPanel(p) {
     )
     .join('');
   const link = links ? `<div class="btn-row">${links}</div>` : '';
+  // email links do nothing on devices with no mail app set up, so the address
+  // is always visible too, with a copy button
+  const emailAlt = p.actions.some((a) => a.type === 'email')
+    ? `<p class="panel__alt">or email <a href="${esc(mailto())}">${esc(site.email)}</a>
+        <button class="copy-btn mono" type="button" data-copy="${esc(site.email)}">Copy</button>
+        <span class="visually-hidden" role="status" aria-live="polite" data-copy-status></span></p>`
+    : '';
   return `
     <div class="panel panel--contact" data-anim="panel">
       <h3 class="panel__title panel__title--lg">${esc(p.title)}</h3>
       <p class="panel__text">${esc(p.text)}</p>
       ${link}
+      ${emailAlt}
     </div>`;
+}
+
+/* ---------- copy email ---------- */
+
+function enableCopyButtons() {
+  document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('[data-copy]');
+    if (!btn) return;
+    const text = btn.dataset.copy;
+    let ok = false;
+    try {
+      await navigator.clipboard.writeText(text);
+      ok = true;
+    } catch {
+      // older browsers / non-secure contexts: copy via a temporary text field
+      const field = Object.assign(document.createElement('textarea'), { value: text });
+      field.setAttribute('readonly', '');
+      field.style.cssText = 'position:fixed;opacity:0';
+      document.body.append(field);
+      field.select();
+      ok = document.execCommand('copy');
+      field.remove();
+    }
+    btn.textContent = ok ? 'Copied' : 'Copy failed';
+    const status = btn.parentElement.querySelector('[data-copy-status]');
+    if (status) status.textContent = ok ? 'Email address copied' : 'Could not copy the email address';
+    clearTimeout(btn._reset);
+    btn._reset = setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+  });
 }
 
 /* ---------- render ---------- */
@@ -353,6 +390,7 @@ const mode = detectMode();
 document.documentElement.dataset.bg = mode.background;
 
 render();
+enableCopyButtons();
 cycleShots();
 setActiveScene(0);
 watchSections();
