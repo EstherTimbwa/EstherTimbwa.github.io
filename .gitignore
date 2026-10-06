@@ -1,0 +1,20 @@
+# Private: original CV with phone number (publish a cleaned copy as assets/cv.pdf instead)
+/EstherTimbwa_CV_2026.pdf
+
+# Dev-only tooling (screenshots, tests)
+node_modules/
+package.json
+package-lock.json
+playwright-report/
+test-results/
+.playwright/
+*.mjs
+
+# Editor / OS clutter
+.vscode/
+.idea/
+.claude/
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log

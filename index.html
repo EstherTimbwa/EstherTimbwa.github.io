@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Esther Timbwa | Web Developer, QA Tester and Technical Support</title>
+  <meta name="description" content="Esther Timbwa is a freelance web developer in Nairobi building e-commerce websites for small businesses, with a background in QA testing and technical support.">
+  <meta name="author" content="Esther Timbwa">
+  <meta name="theme-color" content="#07090D">
+
+  <link rel="canonical" href="https://esthertimbwa.github.io/">
+
+  <!-- Open Graph / Twitter (link previews need absolute URLs) -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://esthertimbwa.github.io/">
+  <meta property="og:title" content="Esther Timbwa | Web Developer, QA Tester and Technical Support">
+  <meta property="og:description" content="I build websites. Then I test them. Freelance web developer with a QA testing and technical support background.">
+  <meta property="og:image" content="https://esthertimbwa.github.io/assets/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://esthertimbwa.github.io/assets/og-image.png">
+
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Manrope:wght@400;500;600&family=Sora:wght@400;600;700&display=swap">
+  <link rel="stylesheet" href="css/styles.css">
+
+  <script>document.documentElement.classList.replace('no-js', 'js');</script>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.5/index.js",
+        "gsap/ScrollTrigger": "https://cdn.jsdelivr.net/npm/gsap@3.12.5/ScrollTrigger.js",
+        "lenis": "https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.mjs"
+      }
+    }
+  </script>
+  <script type="module" src="js/main.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- Backgrounds: static CSS version always present, WebGL canvas added on capable devices -->
+  <div class="bg-static" aria-hidden="true">
+    <div class="bg-static__floor"></div>
+    <div class="bg-static__orb"></div>
+  </div>
+  <div class="bg-webgl" id="bg" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a class="topbar__name" href="#intro">Esther Timbwa</a>
+    <p class="topbar__counter mono" aria-hidden="true">
+      <span data-counter-num>01</span> / <span data-counter-total>06</span>
+      <span class="topbar__counter-name" data-counter-name>Intro</span>
+    </p>
+  </header>
+
+  <nav class="dots" aria-label="Sections">
+    <ol data-dots></ol>
+  </nav>
+
+  <main id="main" class="stage" data-stage tabindex="-1"></main>
+
+  <noscript>
+    <div class="noscript">
+      <h1>Esther Timbwa</h1>
+      <p>Freelance web developer with a background in QA testing and technical support. Nairobi, Kenya.</p>
+      <p>
+        <a href="mailto:estherundisa09@gmail.com">estherundisa09@gmail.com</a> ·
+        <a href="https://www.linkedin.com/in/esther-timbwa-388244201">LinkedIn</a> ·
+        <a href="https://github.com/EstherTimbwa">GitHub</a>
+      </p>
+    </div>
+  </noscript>
+</body>
+</html>
